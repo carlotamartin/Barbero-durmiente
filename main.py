@@ -58,31 +58,33 @@ class BarberShop:
 			mutex.release()
 			barber.wakeUp()
 
+#Definir la clase Cliente para el hilo
 class Customer:
 	def __init__(self, name):
 		self.name = name
-
+#Definir la clase Barbero para el hilo
 class Barber:
-	barberWorkingEvent = Event()
+	barberWorkingEvent = Event() #Evento para saber si el barbero está trabajando o no
 
-	def sleep(self):
+	def sleep(self): #Método para que el barbero se duerma
 		self.barberWorkingEvent.wait()
 
-	def wakeUp(self):
+	def wakeUp(self): # Método para que el barbero se despierte
 		self.barberWorkingEvent.set()
 
-	def cutHair(self, customer):
+	def cutHair(self, customer): #Método para que el barbero corte el pelo
 		#Set barber as busy
 		self.barberWorkingEvent.clear()
 
 		print ('{0} se está cortando el pelo'.format(customer.name))
 
-		randomHairCuttingTime = random.randrange(haircutDurationMin, haircutDurationMax+1)
+		randomHairCuttingTime = random.randrange(haircutDurationMin, haircutDurationMax+1) #Se genera un tiempo de corte de pelo aleatorio
 		time.sleep(randomHairCuttingTime)
-		print ('{0} está hecho'.format(customer.name))
+		print ('{0} está hecho'.format(customer.name)) #Se imprime que el cliente ya se cortó el pelo
 
 
 if __name__ == '__main__':
+    #Definir el nombre de clientes
 	customers = []
 	customers.append(Customer('Ruben'))
 	customers.append(Customer('Sara'))
@@ -106,7 +108,7 @@ if __name__ == '__main__':
 
 	barberShop = BarberShop(barber, numberOfSeats=3)
 	barberShop.openShop()
-
+    #Se imprime el nombre de los clientes
 	while len(customers) > 0:
     #el método pop elimina el elemeto dado de la pila y devuelve
 		c = customers.pop()
