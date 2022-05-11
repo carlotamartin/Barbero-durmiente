@@ -3,15 +3,17 @@ import time, random
 
 mutex = Lock()
 
-#Interval in seconds
+#Definir una clase para el hilo
 customerIntervalMin = 5
 customerIntervalMax = 15
 haircutDurationMin = 3
 haircutDurationMax = 15
 
+#Definir la clase Barbero para el hilo
 class BarberShop:
-	waitingCustomers = []
 
+	waitingCustomers = []
+    #Definir el constructor de la clase
 	def __init__(self, barber, numberOfSeats):
 		self.barber = barber
 		self.numberOfSeats = numberOfSeats
@@ -21,36 +23,37 @@ class BarberShop:
 		print ('Duración mínima de corte de pelo {0}'.format(haircutDurationMin))
 		print ('Duración máxima de corte de pelo {0}'.format(customerIntervalMax))
 		print ('---------------------------------------')
-
+    #Metod para cuando abre la barbería
 	def openShop(self):
 		print ('La barbería está abierta')
 		workingThread = Thread(target = self.barberGoToWork)
 		workingThread.start()
-
+    #Método para cuando está trabajando el barbero y termina todos los clientes y se va a dormir
 	def barberGoToWork(self):
 		while True:
-			mutex.acquire()
+			mutex.acquire() #Se bloquea el acceso a la lista de clientes
 
-			if len(self.waitingCustomers) > 0:
+			if len(self.waitingCustomers) > 0: #Si hay clientes en la lista
 				c = self.waitingCustomers[0]
 				del self.waitingCustomers[0]
 				mutex.release()
 				self.barber.cutHair(c)
-			else:
+			else: #Si no hay clientes en la lista
 				mutex.release()
 				print ('BIEEEN!! el barbero se va a dormir, zzzzzz')
 				barber.sleep()
 				print ('El barbero se ha despertado  :=)')
 
+    #Método para cuando el cliente llega a la barbería
 	def enterBarberShop(self, customer):
 		mutex.acquire()
-		print ('>> {0} entró en la barbería y esta buscando un hueco'.format(customer.name))
+		print ('>> {0} entró en la barbería y esta buscando un hueco'.format(customer.name)) #Se imprime el nombre del cliente que está buscando hueco
 
-		if len(self.waitingCustomers) == self.numberOfSeats:
+		if len(self.waitingCustomers) == self.numberOfSeats: #Si el numero de clientes es igual al numero de sitios-> está lleno
 			print ('El salón esta lleno, {0} está yéndose.'.format(customer.name))
 			mutex.release()
 		else:
-			print ('{0} está esperando en la sala de espera'.format(customer.name)	)
+			print ('{0} está esperando en la sala de espera'.format(customer.name)	) #Se imprime el nombre del cliente que está esperando porwue ha encontrado hueco en la barbería
 			self.waitingCustomers.append(c)
 			mutex.release()
 			barber.wakeUp()
